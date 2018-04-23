@@ -1,3 +1,4 @@
+
 import random
 
 def shuffled_deck():
@@ -10,7 +11,8 @@ p1deck,p2deck = deck[::2],deck[1::2]
 p1point,p2point = 0,0
 holder = []
 
-#-----Having an issue here where I append the values to the holder function
+def war (p1,p2):
+  if p1 == p2:
     holder.append(p1deck[x])
     holder.append(p2deck[x])
     war(p1deck[x],p2deck[x])
@@ -31,11 +33,10 @@ def turn(turnnum):
     if p1 > p2:
         p1point+=1
     elif p1 == p2:
-        war()
+        war(p1,p2)
     else:
         p2point+=1
 
 for x in range(len(p1deck)):
     turn(x)
     x+=1
-print(p1points, p2points)
