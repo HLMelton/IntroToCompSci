@@ -1,129 +1,131 @@
 from random import randint as rng
-import json
 
-initstr = "  __Westward__\n"+"   New || Load " +"\n"+"\n-Select Game Type-"+"\n__________________"
 dist = 2000
-time = 24
-exhaustion = False
-days = 45
-distday = "Days to Winter = " + str(days)
-#--------------------------------------------------------------
-def write():
-	pass
+days = 303
+food = 500
+health = 5
+family = []
 
-def loadg():
-	pass
-
-def init():
-	inq = str(input(initstr)).lower()	
-	while loopa == 1:	
-		if inq == "load":
-			loadg()
-		elif inq == "new":
-			write()
-		else:
-			print("Enter Valid Option")
-#--------------------------------------------------------------
 def start():
-	global family
-	global familyname
-	family = []
-	familyname = str(input("Your Surname?"))
-	famsize = int(input("How large is your family?"))
-	if famsize == 1:
-		print("You're bold to head west alone.")
-	else:
-		for name in range(int(input())):
-			name = input("What is your family member's name?")
-			family.append(name)
-			print("Okay, got "+name+" "+familyname)
-		for member in family:
-			print(member + " " + familyname)
-		print("Alright, I've you on the roster. You're good to go!")
+    global family
+    global familyname
+    global alive
+    family = []
+    familyname = str(input("Your family name?"))
+    famsize = int(input("How large is your family?"))
+    if famsize == 1:
+        print("You're bold to head west alone.")
+    else:
+        for name in range(famsize):
+            name = input("What is your family member's name?")
+            family.append(name)
+            print("Okay, got " + name + " " + familyname)
+        for member in family:
+            print(member + " " + familyname)
+        print("Alright, I've you on the roster. You're good to go!\n")
+    alive = True
 
-#def travel():
-#	sprint = input("Would you like to sprint today's distance")
-#	if sprint.lower() == "yes":
-#		roll = rng(1,10)
-#		rollcp = rng(1,10)
-#		if roll > rollcp:
-#			status = True
-#		else:
-#			status = False
-#		sprint(status)
-#	else:
-#		hours = input("How many hours would you like to travel?")
-#		while heure < 16:
-#			if hours > 8:
-#				global exhaustion
-#				exhaustion = True
-#			else: 
-#				trvl = rng(1,250)
-#				global dist
-#				dist = dist - trvl	
+#-----Base Functions-----
 
-def travel(dist):
-	
-	trvdist = rng()
-	
-	dist = dist + trvdist
-	return dist
-			
-def admin():
-	global dist
-	dist = input("Distance?")
+def travel():
+    global days
+    global dist
+    global health
+    global food
+    trvdist = rng(100,250)
+    damage = rng(0,1)
+    if trvdist > 150 and damage == 1:
+        print("Your wagon was damaged...")
+        health-=1
+    dist -= trvdist
+    days -= 1
+    food -= rng(50,100)
 
-def rest(dmg):
-	sleep = input("Would you like to SLEEP or REST")
-	global exhaustion
-	if sleep == "SLEEP":
-		pass
-		#add a day to the 
-	elif sleep == "REST":
-		pass
-		#subtract hours from the day
-	pass
-	
-def hunt(food):
-	
-	pass
+def rest():
+    global days
+    global health
+    global food
+    health +=1
+    attack = rng(0,1)
+    if attack == 0:
+        food-=rng(50,150)
+        print("You were robbed in the night and lost some food")
+        days=-rng(2,5)
+    else:
+        food-=25
+        days-=1
 
-def status(dmg, food, family, supp):
-	#presents the status of the wagon
-	pass
-	
-def help():
-	pass
-	
-def quit():
-	pass
-	
-def endgame():
-	pass
-	
-def settings():
-	menu = input("Which meny would you like to access?\nHelp\nQuit\nAdmin")
-	if menu == help:
-		help()
-	elif menu == quit:
-		gamerunning == false	
-	
-def day():
-	global date
-	global dist
-	date=+1
-	print("Your are "+str(dist))
-	heure = 0
-	while heure < 16:
-		wake()
-		actioninq = str(input("What would you like to do today?"))
-		if actioninq.lower() == "hunt":
-			hunt()
-		elif actioninq.lower() == "rest":
-			rest()
-		elif actioninq.lower() == "travel":
-			travel()
-		elif actioninq.lower() == "settings":
-			settings()		
-	
-travel()
+
+
+def hunt():
+    prey = input("What are you hunting for?\nBison | Rabbits | Deer | People")
+    hunt = True
+    while hunt == True:
+        if prey.lower() == "people":
+            print("Well that is unlawful.")
+            loot = rng(100,200)
+            global family
+            global health
+            if loot >= 170:
+                victim = family[rng(1,len(family))]
+                family = family.remove(victim)
+                print("In the attack, "+str(victim)+" was found dead....")
+            hunt = False
+        elif prey.lower() == "bison":
+            print("You spot some bison in the distance.")
+            loot = rng(150,200)
+            hunt = False
+        elif prey.lower() == "rabbits":
+            print("You find rabbit droppings nearby and set out some snares.")
+            loot = rng(50,150)
+            hunt = False
+        elif prey.lower() == "deer":
+            print("You spotted some deer in the distance.")
+            loot = rng(100,150)
+            hunt = False
+    print("You loot "+str(loot)+" from your hunt.")
+    global food
+    food += loot
+    if food >= 500:
+        food = 500
+    global days
+    days -=rng(2,5)
+    return food
+
+def status(food, health, dist):
+    print("Food : "+str(food)+"\nHealth : "+str(health)+"\nDistance : "+str(dist))
+
+def help(dist):
+    print("You are "+str(dist)+"from your destination.\n")
+    print("You can REST, HUNT, TRAVEL, STATUS.\n")
+
+print("-----Welcome to Westward!-----")
+start()
+while alive == True:
+    if food <= 0:
+        print("You starved to death")
+        alive = False
+        break
+    elif days == 0:
+        print("Winter came before you could make it.")
+        alive = False
+        break
+    elif health <= 0:
+        print("Your wagon crashed and your family was stranded.")
+        alive = False
+        break
+    print("---Day "+str(days)+"---")
+    action = str(input("What would you like to do today?"))
+    if action.lower() == "rest":
+        rest()
+    elif action.lower() == "travel":
+        travel()
+    elif action.lower() == "hunt":
+        hunt()
+    elif action.lower() == "status":
+        status(food, health, dist)
+    elif action.lower() == "help":
+        help()
+    elif action.lower() == "quit":
+        print("Thank you for playing")
+        break
